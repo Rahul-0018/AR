@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>AR.js Astronaut (Rear Camera + Logs)</title>
+    <title>AR.js Damaged Helmet (Rear Camera + Logs)</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/2.2.1/aframe/build/aframe-ar.js"></script>
     <style>
@@ -28,9 +28,9 @@
     <a-scene embedded vr-mode-ui="enabled: false"
              arjs="sourceType: webcam; facingMode: environment; debugUIEnabled: false;">
       <a-entity camera></a-entity>
-      <a-entity id="astronaut"
-        gltf-model="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Astronaut/glTF/Astronaut.gltf"
-        scale="1.5 1.5 1.5"
+      <a-entity id="helmet"
+        gltf-model="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf"
+        scale="2 2 2"
         position="0 0 -3"
         rotation="0 180 0">
       </a-entity>
@@ -42,17 +42,17 @@
         logBox.innerHTML += msg + "<br>";
         logBox.scrollTop = logBox.scrollHeight;
       }
-      const astronaut = document.getElementById("astronaut");
+      const helmet = document.getElementById("helmet");
       addLog("🚀 App started, requesting REAR camera...");
-      astronaut.addEventListener("model-loaded", () =>
-        addLog("✅ Model loaded (Astronaut) & placed 3m in front of camera")
+      helmet.addEventListener("model-loaded", () =>
+        addLog("✅ Model loaded (Damaged Helmet) & placed 3m in front of camera")
       );
-      astronaut.addEventListener("model-error", e =>
+      helmet.addEventListener("model-error", e =>
         addLog("❌ Model failed: " + JSON.stringify(e.detail))
       );
       window.addEventListener("click", () => {
-        const pos = astronaut.getAttribute("position");
-        addLog("👆 Tap detected. Astronaut at: " + JSON.stringify(pos));
+        const pos = helmet.getAttribute("position");
+        addLog("👆 Tap detected. Helmet at: " + JSON.stringify(pos));
       });
     </script>
   </body>
