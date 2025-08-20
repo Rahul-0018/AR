@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>AR.js Astronaut with Logs</title>
+    <title>AR.js with Logs (Rear Camera + Working Model)</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/2.2.1/aframe/build/aframe-ar.js"></script>
     <style>
@@ -29,15 +29,15 @@
     <a-scene
       embedded
       vr-mode-ui="enabled: false"
-      arjs="sourceType: webcam; debugUIEnabled: false;">
+      arjs="sourceType: webcam; facingMode: environment; debugUIEnabled: false;">
       
       <!-- Camera -->
       <a-entity camera></a-entity>
 
-      <!-- Astronaut Model -->
-      <a-entity id="astro"
-        gltf-model="https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Models/2.0/Astronaut/glTF-Binary/Astronaut.glb"
-        scale="0.2 0.2 0.2"
+      <!-- Test Model (Duck) -->
+      <a-entity id="duck"
+        gltf-model="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF/Duck.gltf"
+        scale="0.01 0.01 0.01"
         position="0 0 -1"
         rotation="0 180 0">
       </a-entity>
@@ -51,18 +51,18 @@
         logBox.scrollTop = logBox.scrollHeight;
       }
 
-      const astro = document.getElementById("astro");
+      const duck = document.getElementById("duck");
 
-      addLog("🚀 App started, requesting camera...");
+      addLog("🚀 App started, requesting REAR camera...");
 
       // Model events
-      astro.addEventListener("model-loaded", () => addLog("✅ Model loaded & placed 1m in front of camera"));
-      astro.addEventListener("model-error", e => addLog("❌ Model failed: " + JSON.stringify(e.detail)));
+      duck.addEventListener("model-loaded", () => addLog("✅ Model loaded (Duck) & placed 1m in front of camera"));
+      duck.addEventListener("model-error", e => addLog("❌ Model failed: " + JSON.stringify(e.detail)));
 
       // Tap log
       window.addEventListener("click", () => {
-        const pos = astro.getAttribute("position");
-        addLog("👆 Tap detected. Astronaut at: " + JSON.stringify(pos));
+        const pos = duck.getAttribute("position");
+        addLog("👆 Tap detected. Duck at: " + JSON.stringify(pos));
       });
     </script>
   </body>
