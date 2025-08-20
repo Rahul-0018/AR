@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>AR.js with Logs (Rear Camera + Working Model)</title>
+    <title>AR.js Astronaut with Logs (Rear Camera)</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/2.2.1/aframe/build/aframe-ar.js"></script>
     <style>
@@ -34,14 +34,13 @@
       <!-- Camera -->
       <a-entity camera></a-entity>
 
-      <!-- Test Model (Duck) -->
-      <a-entity
-  gltf-model="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Duck/glTF/Duck.gltf"
-  scale="0.01 0.01 0.01"
-  position="0 0 -1"
-  rotation="0 180 0">
-</a-entity>
-      
+      <!-- Astronaut Model -->
+      <a-entity id="astronaut"
+        gltf-model="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Astronaut/glTF/Astronaut.gltf"
+        scale="0.75 0.75 0.75"
+        position="0 0 -1"
+        rotation="0 180 0">
+      </a-entity>
     </a-scene>
 
     <script>
@@ -52,18 +51,22 @@
         logBox.scrollTop = logBox.scrollHeight;
       }
 
-      const duck = document.getElementById("duck");
+      const astronaut = document.getElementById("astronaut");
 
       addLog("🚀 App started, requesting REAR camera...");
 
       // Model events
-      duck.addEventListener("model-loaded", () => addLog("✅ Model loaded (Duck) & placed 1m in front of camera"));
-      duck.addEventListener("model-error", e => addLog("❌ Model failed: " + JSON.stringify(e.detail)));
+      astronaut.addEventListener("model-loaded", () =>
+        addLog("✅ Model loaded (Astronaut) & placed 1m in front of camera")
+      );
+      astronaut.addEventListener("model-error", e =>
+        addLog("❌ Model failed: " + JSON.stringify(e.detail))
+      );
 
       // Tap log
       window.addEventListener("click", () => {
-        const pos = duck.getAttribute("position");
-        addLog("👆 Tap detected. Duck at: " + JSON.stringify(pos));
+        const pos = astronaut.getAttribute("position");
+        addLog("👆 Tap detected. Astronaut at: " + JSON.stringify(pos));
       });
     </script>
   </body>
