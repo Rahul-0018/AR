@@ -1,39 +1,44 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>AR Object Test with Logs</title>
-    <script src="https://cdn.jsdelivr.net/npm/aframe@1.4.2/dist/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar/dist/mindar-image-aframe.prod.js"></script>
-    <style>
-      body { margin: 0; overflow: hidden; }
-      #logBox {
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        background: rgba(0,0,0,0.7);
-        color: #0f0;
-        padding: 10px;
-        font-family: monospace;
-        font-size: 14px;
-        max-width: 90%;
-        z-index: 9999;
-        border-radius: 8px;
-      }
-    </style>
+    <title>Markerless AR Object</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   </head>
   <body>
-    <div id="logBox">📋 Logs:<br></div>
-
     <a-scene
-      mindar-image="imageTargetSrc: https://cdn.jsdelivr.net/gh/MindAR-js/marker-examples/targets/target.mind;"
-      color-space="sRGB"
       embedded
       renderer="colorManagement: true, physicallyCorrectLights"
       vr-mode-ui="enabled: false"
-      device-orientation-permission-ui="enabled: true">
+      xr-mode-ui="enabled: true"
+      webxr="optionalFeatures: hit-test, local-floor, bounded-floor">
 
-      <a-camera position="0 0 0" look-controls="enabled: true"></a-camera>
+      <!-- Camera -->
+      <a-entity camera look-controls></a-entity>
 
+      <!-- 3D Model (appears on tap / screen center raycast) -->
+      <a-entity id="astro"
+        gltf-model="https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Models/2.0/Astronaut/glTF-Binary/Astronaut.glb"
+        scale="0.2 0.2 0.2"
+        visible="false">
+      </a-entity>
+    </a-scene>
+
+    <script>
+      const sceneEl = document.querySelector("a-scene");
+      const astro = document.getElementById("astro");
+
+      // When AR session starts
+      sceneEl.addEventListener("enter-vr", () => {
+        if (sceneEl.xrSession) {
+          console.log("✅ AR session started");
+          // Place model at fixed position (in front of user)
+          astro.setAttribute("position", "0 0 -1");
+          astro.setAttribute("visible", "true");
+        }
+      });
+    </script>
+  </body>
+</html>
       <!-- Attach 3D object to marker -->
       <a-entity mindar-image-target="targetIndex: 0" id="marker">
         <a-gltf-model 
