@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AR.js Tap-to-Place Fallback (No WebXR)</title>
+  <title>AR.js Tap-to-Place Model Fallback (No WebXR)</title>
   <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
   <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/2.2.1/aframe/build/aframe-ar.js"></script>
   <style>
@@ -40,62 +40,61 @@
   <div id="logBox">📋 Logs:<br></div>
   <div id="reticle"></div>
 
-<a-scene embedded vr-mode-ui="enabled: false"
-  arjs="sourceType: webcam; facingMode: environment; debugUIEnabled: false;">
-  
-  <a-entity camera></a-entity>
+  <a-scene embedded vr-mode-ui="enabled: false"
+           arjs="sourceType: webcam; facingMode: environment; debugUIEnabled: false;">
+    
+    <a-entity camera></a-entity>
 
-  <!-- Model initially invisible -->
-  <a-entity id="model"
-    gltf-model="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf"
-    scale="2 2 2"
-    visible="false"
-    rotation="0 180 0">
-  </a-entity>
-</a-scene>
+    <!-- Model initially invisible -->
+    <a-entity id="model"
+      gltf-model="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/DamagedHelmet/glTF/DamagedHelmet.gltf"
+      scale="2 2 2"
+      visible="false"
+      rotation="0 180 0">
+    </a-entity>
+  </a-scene>
 
-<script>
-  const logBox = document.getElementById('logBox');
-  const reticle = document.getElementById('reticle');
-  const model = document.getElementById('model');
+  <script>
+    const logBox = document.getElementById('logBox');
+    const model = document.getElementById('model');
 
-  function addLog(msg) {
-    console.log(msg);
-    logBox.innerHTML += msg + '<br>';
-    logBox.scrollTop = logBox.scrollHeight;
-  }
+    function addLog(msg) {
+      console.log(msg);
+      logBox.innerHTML += msg + '<br>';
+      logBox.scrollTop = logBox.scrollHeight;
+    }
 
-  addLog('🚀 App started, requesting REAR camera...');
+    addLog('🚀 App started, requesting REAR camera...');
 
-  // On tap, place the model 2m in front of camera at reticle center
-  window.addEventListener('click', () => {
-    const camera = document.querySelector('[camera]');
-    const direction = new THREE.Vector3();
+    model.addEventListener('model-loaded', () => {
+      addLog('✅ Model loaded and ready');
+    });
 
-    camera.object3D.getWorldDirection(direction);
-    const cameraPosition = camera.object3D.position;
+    model.addEventListener('model-error', e => {
+      addLog('❌ Model load failed: ' + JSON.stringify(e.detail));
+    });
 
-    // Calculate position 2 meters ahead along camera direction
-    const newPos = {
-      x: cameraPosition.x + direction.x * 2,
-      y: cameraPosition.y + direction.y * 2,
-      z: cameraPosition.z + direction.z * 2,
-    };
+    window.addEventListener('click', () => {
+      const camera = document.querySelector('[camera]');
+      const direction = new THREE.Vector3();
+      camera.object3D.getWorldDirection(direction);
 
-    model.object3D.position.set(newPos.x, newPos.y, newPos.z);
-    model.setAttribute('visible', 'true');
+      const cameraWorldPos = new THREE.Vector3();
+      camera.object3D.getWorldPosition(cameraWorldPos);
 
-    addLog('👆 Tap detected. Model placed at: ' + JSON.stringify(newPos));
-  });
+      // Place model 2 meters in front of camera
+      const newPos = {
+        x: cameraWorldPos.x + direction.x * -2,
+        y: cameraWorldPos.y + direction.y * -2,
+        z: cameraWorldPos.z + direction.z * -2
+      };
 
-  model.addEventListener('model-loaded', () => {
-    addLog('✅ Model loaded and ready');
-  });
+      model.object3D.position.set(newPos.x, newPos.y, newPos.z);
+      model.setAttribute('visible', 'true');
 
-  model.addEventListener('model-error', e => {
-    addLog('❌ Model load failed: ' + JSON.stringify(e.detail));
-  });
-</script>
+      addLog('👆 Tap detected. Model placed at: ' + JSON.stringify(newPos));
+    });
+  </script>
 
 </body>
 </html>
