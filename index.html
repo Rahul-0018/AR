@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Markerless AR with Logs</title>
+    <title>AR.js Astronaut with Logs</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/2.2.1/aframe/build/aframe-ar.js"></script>
     <style>
       body { margin: 0; overflow: hidden; }
       #logBox {
@@ -27,58 +28,41 @@
 
     <a-scene
       embedded
-      renderer="colorManagement: true, physicallyCorrectLights"
       vr-mode-ui="enabled: false"
-      xr-mode-ui="enabled: true"
-      webxr="optionalFeatures: hit-test, local-floor, bounded-floor">
-
+      arjs="sourceType: webcam; debugUIEnabled: false;">
+      
       <!-- Camera -->
-      <a-entity camera look-controls></a-entity>
+      <a-entity camera></a-entity>
 
-      <!-- Astronaut model -->
+      <!-- Astronaut Model -->
       <a-entity id="astro"
         gltf-model="https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Models/2.0/Astronaut/glTF-Binary/Astronaut.glb"
         scale="0.2 0.2 0.2"
-        visible="false">
+        position="0 0 -1"
+        rotation="0 180 0">
       </a-entity>
     </a-scene>
 
     <script>
       const logBox = document.getElementById("logBox");
       function addLog(msg) {
-        console.log(msg); // Also in browser console
+        console.log(msg);
         logBox.innerHTML += msg + "<br>";
         logBox.scrollTop = logBox.scrollHeight;
       }
 
-      const sceneEl = document.querySelector("a-scene");
       const astro = document.getElementById("astro");
 
-      // Log app start
-      addLog("🚀 App started, waiting for AR session...");
-
-      // AR session start
-      sceneEl.addEventListener("enter-vr", () => {
-        if (sceneEl.xrSession) {
-          addLog("✅ AR session started");
-          astro.setAttribute("position", "0 0 -1"); // 1m in front
-          astro.setAttribute("visible", "true");
-          addLog("👨‍🚀 Astronaut placed 1m in front of camera");
-        }
-      });
+      addLog("🚀 App started, requesting camera...");
 
       // Model events
-      astro.addEventListener("model-loaded", () => addLog("✅ Model loaded!"));
+      astro.addEventListener("model-loaded", () => addLog("✅ Model loaded & placed 1m in front of camera"));
       astro.addEventListener("model-error", e => addLog("❌ Model failed: " + JSON.stringify(e.detail)));
 
-      // User tap (optional)
+      // Tap log
       window.addEventListener("click", () => {
-        if (astro.getAttribute("visible") === "true") {
-          const pos = astro.getAttribute("position");
-          addLog("👆 Screen tapped. Astronaut currently at: " + JSON.stringify(pos));
-        } else {
-          addLog("👆 Screen tapped but astronaut not visible yet.");
-        }
+        const pos = astro.getAttribute("position");
+        addLog("👆 Tap detected. Astronaut at: " + JSON.stringify(pos));
       });
     </script>
   </body>
