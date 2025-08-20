@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>AR.js Astronaut with Logs (Rear Camera)</title>
+    <title>AR.js Astronaut (Rear Camera + Logs)</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/2.2.1/aframe/build/aframe-ar.js"></script>
     <style>
@@ -25,24 +25,16 @@
   </head>
   <body>
     <div id="logBox">📋 Logs:<br></div>
-
-    <a-scene
-      embedded
-      vr-mode-ui="enabled: false"
-      arjs="sourceType: webcam; facingMode: environment; debugUIEnabled: false;">
-      
-      <!-- Camera -->
+    <a-scene embedded vr-mode-ui="enabled: false"
+             arjs="sourceType: webcam; facingMode: environment; debugUIEnabled: false;">
       <a-entity camera></a-entity>
-
-      <!-- Astronaut Model -->
       <a-entity id="astronaut"
         gltf-model="https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Astronaut/glTF/Astronaut.gltf"
-        scale="0.75 0.75 0.75"
-        position="0 0 -1"
+        scale="1.5 1.5 1.5"
+        position="0 0 -3"
         rotation="0 180 0">
       </a-entity>
     </a-scene>
-
     <script>
       const logBox = document.getElementById("logBox");
       function addLog(msg) {
@@ -50,20 +42,14 @@
         logBox.innerHTML += msg + "<br>";
         logBox.scrollTop = logBox.scrollHeight;
       }
-
       const astronaut = document.getElementById("astronaut");
-
       addLog("🚀 App started, requesting REAR camera...");
-
-      // Model events
       astronaut.addEventListener("model-loaded", () =>
-        addLog("✅ Model loaded (Astronaut) & placed 1m in front of camera")
+        addLog("✅ Model loaded (Astronaut) & placed 3m in front of camera")
       );
       astronaut.addEventListener("model-error", e =>
         addLog("❌ Model failed: " + JSON.stringify(e.detail))
       );
-
-      // Tap log
       window.addEventListener("click", () => {
         const pos = astronaut.getAttribute("position");
         addLog("👆 Tap detected. Astronaut at: " + JSON.stringify(pos));
