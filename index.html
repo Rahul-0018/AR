@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>AR.js Damaged Helmet (Rear Camera + Logs)</title>
+    <title>AR.js Damaged Helmet (Rear Camera + Tap Placement)</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.rawgit.com/jeromeetienne/AR.js/2.2.1/aframe/build/aframe-ar.js"></script>
     <style>
@@ -42,17 +42,29 @@
         logBox.innerHTML += msg + "<br>";
         logBox.scrollTop = logBox.scrollHeight;
       }
-      const helmet = document.getElementById("helmet");
       addLog("🚀 App started, requesting REAR camera...");
+
+      const helmet = document.getElementById("helmet");
       helmet.addEventListener("model-loaded", () =>
         addLog("✅ Model loaded (Damaged Helmet) & placed 3m in front of camera")
       );
       helmet.addEventListener("model-error", e =>
         addLog("❌ Model failed: " + JSON.stringify(e.detail))
       );
+
       window.addEventListener("click", () => {
-        const pos = helmet.getAttribute("position");
-        addLog("👆 Tap detected. Helmet at: " + JSON.stringify(pos));
+        const camera = document.querySelector('[camera]');
+        const direction = new THREE.Vector3();
+        camera.object3D.getWorldDirection(direction);
+
+        const cameraPosition = camera.object3D.position;
+        const newPos = {
+          x: cameraPosition.x + direction.x * 2,
+          y: cameraPosition.y + direction.y * 2,
+          z: cameraPosition.z + direction.z * 2,
+        };
+        helmet.setAttribute("position", newPos);
+        addLog("👆 Tap detected. Helmet moved to: " + JSON.stringify(newPos));
       });
     </script>
   </body>
